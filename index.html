@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FolderLab — Learn Files &amp; Directories by Doing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F2EC; --paper2:#EAE7DF; --card:#FBFAF7; --ink:#1A1C1A; --ink2:#3F4441; --muted:#767C78; --rule:#D8D4CA; --rule2:#C4BFB3;
+  --accent:#2D4B40; --accent2:#5F7F72; --accent3:#B5C6BD; --soft:#E2EAE5;
+  --signal:#A8661C; --signal-soft:#F2E6D3; --err:#A23B2A; --err-soft:#F3DFDA;
+  --mono:"IBM Plex Mono",ui-monospace,monospace; --serif:"Source Serif 4",Georgia,serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;line-height:1.15;margin:0}
+h2{font-size:clamp(28px,3.6vw,38px)} h3{font-size:19px}
+p{margin:0} button{font:inherit;cursor:pointer;color:inherit} a{color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+section{padding:80px 0;border-top:1px solid var(--rule);scroll-margin-top:54px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;gap:12px;align-items:center}
+.kicker b{color:var(--accent);font-weight:600}
+.kicker:after{content:"";flex:1;height:1px;background:var(--rule);max-width:120px}
+.lede{color:var(--ink2);font-size:18px;max-width:680px;margin-top:14px}
+.head{margin-bottom:34px}
+.box{background:var(--card);border:1px solid var(--rule);border-radius:4px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}section{padding:56px 0}}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:3px;padding:9px 16px;font-size:14px;font-weight:500;display:inline-flex;gap:8px;align-items:center;transition:.15s;text-decoration:none}
+.btn:hover{background:var(--accent);border-color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn.line{background:transparent;color:var(--ink);border-color:var(--rule2)}
+.btn.line:hover{border-color:var(--ink)}
+.btn.ai{background:var(--accent);border-color:var(--accent)}
+.btn.ai:hover{background:var(--ink);border-color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--rule2);border-radius:3px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:7px 13px;font-size:13px;font-family:var(--mono);color:var(--ink2);border-right:1px solid var(--rule)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--ink);color:var(--paper)}
+input[type=text],input[type=number],select,textarea{font:inherit;font-family:var(--mono);font-size:14px;border:1px solid var(--rule2);background:#fff;border-radius:3px;padding:8px 10px;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent3);outline-offset:0;border-color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:2px;background:var(--paper2);color:var(--ink2)}
+.tag.ai{background:var(--soft);color:var(--accent)}
+
+/* nav */
+header.nav{position:sticky;top:0;z-index:40;background:rgba(244,242,236,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:52px}
+.brand{font-family:var(--mono);font-weight:600;font-size:14px;text-decoration:none;color:var(--ink);white-space:nowrap;display:flex;gap:8px;align-items:center}
+.nav ul{list-style:none;display:flex;gap:2px;margin:0;padding:0;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav ul::-webkit-scrollbar{display:none}
+.nav li a{display:block;padding:5px 9px;font-size:13px;color:var(--muted);text-decoration:none;white-space:nowrap;border-radius:3px}
+.nav li a.on,.nav li a:hover{color:var(--ink);background:var(--paper2)}
+.aistat{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap;display:flex;gap:6px;align-items:center}
+.aistat i{width:7px;height:7px;border-radius:50%;background:var(--rule2);display:inline-block}
+.aistat.on i{background:var(--accent2)}
+.progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--accent);width:0}
+
+/* hero */
+.hero{padding:66px 0 80px;border-top:0}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:52px;align-items:center}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(40px,6vw,64px)}
+.hero h1 span{color:var(--accent);font-style:italic;font-weight:400}
+.hero .sub{font-size:19px;color:var(--ink2);margin:20px 0 28px;max-width:520px}
+.toc{margin-top:38px;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--rule);max-width:520px}
+.toc a{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);text-decoration:none;color:var(--ink2);font-size:14px}
+.toc a i{font-style:normal;font-family:var(--mono);color:var(--muted);font-size:12px;padding-top:2px}
+.toc a:hover{color:var(--accent)}
+.term-hero{background:var(--ink);color:#D9DED9;border-radius:4px;padding:18px 20px;font-family:var(--mono);font-size:14px;line-height:1.75;min-height:300px}
+.term-hero .p{color:var(--accent3)}
+.term-hero .o{color:#9AA39C}
+.term-hero .cur{display:inline-block;width:8px;height:15px;background:#D9DED9;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* file anatomy */
+.fname{padding:24px}
+.fname-row{display:flex;gap:10px;flex-wrap:wrap}
+.fname-row input{flex:1;min-width:220px;font-size:16px}
+.split{margin-top:22px;display:flex;align-items:stretch;font-family:var(--mono);font-size:clamp(20px,3vw,30px);flex-wrap:wrap}
+.split span{padding:10px 16px;border:1px solid var(--rule2);background:#fff}
+.split .nm{border-right:0;color:var(--ink)}
+.split .dot{border-left:0;border-right:0;padding:10px 2px;color:var(--muted)}
+.split .ex{border-left:0;background:var(--soft);color:var(--accent)}
+.split-lab{display:flex;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:6px;gap:24px}
+.verdict{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:640px){.verdict{grid-template-columns:1fr}}
+.verdict div{border-top:2px solid var(--accent);padding-top:8px}
+.verdict small{display:block;color:var(--muted);font-size:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em}
+.verdict b{font-weight:600}
+.ftype{padding:22px}
+.ftype .ic{font-family:var(--mono);font-size:12px;color:var(--accent);margin-bottom:10px}
+.ftype p{color:var(--ink2);font-size:15px;margin-top:8px}
+.ftype .eg{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.chips-try{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.chips-try button{border:1px dashed var(--rule2);background:transparent;border-radius:3px;padding:4px 9px;font-family:var(--mono);font-size:12px;color:var(--ink2)}
+.chips-try button:hover{border-color:var(--ink);border-style:solid}
+
+/* layers */
+.layers{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:18px;margin-top:18px}
+@media(max-width:860px){.layers{grid-template-columns:1fr}}
+.stack{padding:20px;display:flex;flex-direction:column;gap:6px}
+.ly{border:1px solid var(--rule2);background:#fff;border-radius:3px;padding:12px 14px;text-align:left;display:flex;justify-content:space-between;align-items:center;transition:.2s}
+.ly b{font-weight:600}
+.ly small{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.ly.on{border-color:var(--accent);background:var(--soft)}
+.ly.lit{border-color:var(--signal);background:var(--signal-soft)}
+.ly-detail{padding:22px}
+.ly-detail p{color:var(--ink2);margin-top:8px}
+.flowlog{margin-top:16px;font-family:var(--mono);font-size:13px;border-top:1px solid var(--rule);padding-top:10px;min-height:40px}
+.flowlog div{padding:3px 0}
+
+/* access */
+.acc{padding:22px}
+.acc-top{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px}
+.acc-top>div{min-width:200px}
+.tape{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;position:relative}
+.rec{aspect-ratio:1/1.15;border:1px solid var(--rule2);border-radius:2px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;transition:background .15s,border-color .15s}
+.rec small{font-size:9px;color:var(--muted)}
+.rec.read{background:var(--accent3);border-color:var(--accent2)}
+.rec.hit{background:var(--accent);border-color:var(--accent);color:#fff}
+.rec.hit small{color:var(--accent3)}
+.rec.target{box-shadow:inset 0 0 0 2px var(--signal)}
+.index{display:none;margin-top:16px;gap:6px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:12px}
+.index.on{display:flex}
+.ix{border:1px solid var(--rule2);background:#fff;padding:5px 9px;border-radius:2px;transition:.15s}
+.ix.lit{background:var(--signal-soft);border-color:var(--signal)}
+.acc-out{display:grid;grid-template-columns:1fr 1.2fr;gap:22px;margin-top:22px;align-items:start}
+@media(max-width:760px){.acc-out{grid-template-columns:1fr}}
+.count{font-family:var(--serif);font-size:52px;line-height:1}
+.count small{font-family:var(--mono);font-size:14px;color:var(--muted);margin-left:6px}
+.cmpbar{display:grid;grid-template-columns:110px 1fr 40px;gap:10px;align-items:center;padding:5px 0;font-family:var(--mono);font-size:13px}
+.cmpbar .b{height:16px;background:var(--paper2);border-radius:2px;position:relative}
+.cmpbar .b i{position:absolute;inset:0 auto 0 0;background:var(--accent3);border-radius:2px;transition:width .3s}
+.cmpbar.on .b i{background:var(--accent)}
+.cmpbar span:last-child{text-align:right}
+.acc-desc{color:var(--ink2);font-size:15px;margin-top:10px}
+
+/* sandbox */
+.modes{display:flex;border-bottom:1px solid var(--rule);overflow-x:auto}
+.modes button{border:0;background:none;padding:13px 16px;font-family:var(--mono);font-size:13px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.modes button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.sb{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+@media(max-width:920px){.sb{grid-template-columns:1fr}}
+.sb-left{border-right:1px solid var(--rule);display:flex;flex-direction:column}
+@media(max-width:920px){.sb-left{border-right:0;border-bottom:1px solid var(--rule)}}
+.diagram{padding:12px;overflow:auto;min-height:300px;flex:1}
+.diagram svg{display:block;margin:0 auto}
+@media(max-width:640px){.diagram svg,.org-out .od svg{max-width:none!important}.org-out .od{justify-content:flex-start}}
+.dstat{display:flex;gap:10px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:12px;color:var(--ink2);align-items:center}
+.dstat .warn{color:var(--err)}
+.mode-info{padding:18px 20px;border-top:1px solid var(--rule)}
+.mode-info p{color:var(--ink2);font-size:15px;margin-top:6px}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px;font-size:14px}
+@media(max-width:560px){.pc{grid-template-columns:1fr}}
+.pc ul{margin:6px 0 0;padding:0;list-style:none}
+.pc li{padding:4px 0 4px 16px;position:relative;color:var(--ink2)}
+.pc li:before{content:"+";position:absolute;left:0;color:var(--accent);font-family:var(--mono)}
+.pc .cons li:before{content:"−";color:var(--err)}
+.term{background:var(--ink);color:#D9DED9;font-family:var(--mono);font-size:13.5px;display:flex;flex-direction:column;min-height:420px}
+.term-out{flex:1;overflow-y:auto;padding:14px 16px;max-height:420px;line-height:1.6}
+.term-out .c{color:#fff}
+.term-out .c b{color:var(--accent3);font-weight:400}
+.term-out .ok{color:#9FC2A9}
+.term-out .er{color:#E6A08F}
+.term-out .in{color:#9AA39C}
+.term-out .ai{color:#C9D9CF;border-left:2px solid var(--accent2);padding-left:10px;margin:4px 0;font-family:"IBM Plex Sans",sans-serif;font-size:14px}
+.term-in{display:flex;align-items:center;gap:8px;border-top:1px solid #333834;padding:10px 14px}
+.term-in span{color:var(--accent3);white-space:nowrap}
+.term-in input{background:transparent;border:0;color:#fff;padding:4px 0;font-size:14px}
+.term-in input:focus{outline:0}
+.quick{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid #333834}
+.quick button{border:1px solid #444A45;background:transparent;color:#C9CFCA;border-radius:3px;padding:4px 9px;font-family:var(--mono);font-size:12px}
+.quick button:hover{border-color:#C9CFCA}
+.quick button.aiq{border-color:var(--accent2);color:var(--accent3)}
+
+/* protection */
+.perm{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:860px){.perm{grid-template-columns:1fr}}
+.pm{padding:22px}
+.pm table{width:100%;border-collapse:collapse;margin-top:12px;font-size:15px}
+.pm th,.pm td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--rule)}
+.pm th{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--muted)}
+.pm td:first-child{text-align:left;font-weight:600}
+.pm td:first-child small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.pm input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}
+.octal{display:flex;gap:24px;margin-top:16px;align-items:baseline;flex-wrap:wrap}
+.octal b{font-family:var(--mono);font-size:30px;font-weight:500}
+.octal span{font-family:var(--mono);font-size:18px;color:var(--ink2)}
+.tryacc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.accres{margin-top:16px;padding:14px 16px;border-radius:3px;font-size:15px}
+.accres.yes{background:var(--soft);border-left:3px solid var(--accent)}
+.accres.no{background:var(--err-soft);border-left:3px solid var(--err)}
+.accres b{font-family:var(--mono)}
+.cards4 .box{padding:20px}
+.cards4 .box p{color:var(--ink2);font-size:14px;margin-top:6px}
+.cards4 .label{margin-bottom:8px;display:block}
+.subh{margin:38px 0 14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+
+/* AI organizer */
+.org{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.org-in{padding:22px;display:flex;flex-direction:column;gap:12px}
+.org-in textarea{min-height:96px;resize:vertical;line-height:1.6}
+.org-out{padding:18px;display:flex;flex-direction:column;min-height:300px}
+.org-out .od{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center}
+.org-out .od svg{display:block}
+.org-why{font-size:15px;color:var(--ink2);margin-top:12px;border-top:1px solid var(--rule);padding-top:12px}
+.empty{color:var(--muted);font-size:15px;text-align:center;max-width:320px}
+.spinner{font-family:var(--mono);color:var(--muted);font-size:13px}
+
+/* takeaways */
+.take{padding:24px;border-top:3px solid var(--accent)}
+.take .n{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.take p{margin-top:10px;font-size:17px;font-family:var(--serif);line-height:1.4}
+footer{padding:54px 0 120px;border-top:1px solid var(--rule);color:var(--muted);font-size:14px}
+footer h2{color:var(--ink);margin-bottom:10px}
+
+/* chat */
+.fab{position:fixed;right:22px;bottom:22px;z-index:60;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:3px;padding:11px 16px;font-family:var(--mono);font-size:13px}
+.fab:hover{background:var(--ink);border-color:var(--ink)}
+.chat{position:fixed;right:22px;bottom:22px;z-index:70;width:410px;max-width:calc(100vw - 24px);height:590px;max-height:calc(100vh - 44px);background:var(--card);border:1px solid var(--ink);border-radius:4px;display:flex;flex-direction:column;overflow:hidden;transform:translateY(16px);opacity:0;pointer-events:none;transition:.2s}
+.chat.open{transform:none;opacity:1;pointer-events:auto}
+.chat-h{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--rule)}
+.chat-h b{font-family:var(--mono);font-size:13px;font-weight:600}
+.chat-h small{display:block;color:var(--muted);font-size:11px;font-family:var(--mono)}
+.chat-h .x{margin-left:auto;border:0;background:none;font-size:20px;color:var(--muted);width:30px;height:30px}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.m{max-width:92%;font-size:15px;line-height:1.5}
+.m.bot{align-self:flex-start;border-left:2px solid var(--accent);padding:2px 0 2px 12px}
+.m.me{align-self:flex-end;background:var(--paper2);padding:9px 12px;border-radius:3px}
+.m p+p,.m ul,.m ol{margin-top:8px}
+.m ul,.m ol{padding-left:20px;margin-bottom:0}
+.m code{font-family:var(--mono);font-size:.9em;background:var(--paper2);padding:1px 4px}
+.sugg{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 10px}
+.sugg button{border:1px solid var(--rule2);background:#fff;border-radius:3px;padding:5px 9px;font-size:12px;color:var(--ink2)}
+.sugg button:hover{border-color:var(--ink)}
+.chat form{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--rule)}
+.chat textarea{flex:1;resize:none;border:1px solid var(--rule2);border-radius:3px;padding:9px 11px;font:inherit;font-size:15px;max-height:110px;outline:none;background:#fff}
+.send{border:0;background:var(--ink);color:var(--paper);width:42px;border-radius:3px;font-family:var(--mono)}
+.send:disabled{opacity:.4}
+.disc{font-size:11px;color:var(--muted);text-align:center;padding:0 12px 8px;font-family:var(--mono)}
+
+/* ============ MODERATE THEME ============ */
+:root{
+  --paper:#F7F7F4; --paper2:#EFEFEB; --card:#FFFFFF; --ink:#1C1F24; --ink2:#454A53; --muted:#6E737C; --rule:#E4E3DE; --rule2:#CFCEC8;
+  --accent:#3B5BDB; --accent2:#6A84E8; --accent3:#C9D3F8; --soft:#EEF2FF;
+  --amber:#F0B132; --amber-soft:#FFF5DD; --green:#2F9E6E; --green-soft:#E6F5EE; --violet:#7C5CDB; --violet-soft:#F1ECFD; --coral:#E5533D; --coral-soft:#FDECE8;
+  --signal:#E5533D; --signal-soft:#FDECE8; --err:#D2402A; --err-soft:#FDECE8;
+  --serif:"IBM Plex Sans",system-ui,sans-serif; --sec:var(--accent); --sec-soft:var(--soft);
+}
+h1,h2,h3{font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:700;letter-spacing:-.02em}
+h3{font-size:18px;font-weight:600}
+section{border-top:0}
+section:nth-of-type(even){background:#fff;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+#files{--sec:var(--accent);--sec-soft:var(--soft)}
+#access{--sec:#C98A0E;--sec-soft:var(--amber-soft)}
+#directories{--sec:var(--green);--sec-soft:var(--green-soft)}
+#protection{--sec:var(--violet);--sec-soft:var(--violet-soft)}
+#organizer{--sec:var(--coral);--sec-soft:var(--coral-soft)}
+.kicker{color:var(--muted)}
+.kicker b{color:var(--sec);background:var(--sec-soft);padding:2px 8px;border-radius:20px}
+.kicker:after{display:none}
+.box{border-radius:10px;border-color:var(--rule);box-shadow:0 1px 2px rgba(20,22,26,.04)}
+.btn{border-radius:8px;border-color:var(--accent);background:var(--accent);color:#fff}
+.btn:hover{background:#2F4BC0;border-color:#2F4BC0}
+.btn.line{background:#fff;color:var(--ink);border-color:var(--rule2)}
+.btn.line:hover{border-color:var(--ink);background:#fff}
+.btn.ai{background:var(--coral);border-color:var(--coral)}
+.btn.ai:hover{background:#CC4430;border-color:#CC4430}
+.seg{border-radius:8px}
+.seg button.on{background:var(--accent);color:#fff}
+input[type=text],input[type=number],select,textarea{border-radius:8px}
+.tag{border-radius:20px;padding:2px 9px}
+.tag.ai{background:var(--coral-soft);color:var(--coral)}
+.chips-try button{border-radius:20px}
+.chips-try button:hover{border-color:var(--accent);color:var(--accent)}
+
+/* card header strip */
+.win{background:var(--card);border:1px solid var(--rule);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-width:0;box-shadow:0 1px 2px rgba(20,22,26,.04)}
+.win>.box{border:0;border-radius:0;box-shadow:none;flex:1;min-width:0}
+.whead{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:12px;color:var(--ink2);background:#FCFCFA}
+.whead i{width:8px;height:8px;border-radius:50%;background:var(--sec);flex:none}
+
+/* nav */
+header.nav{background:rgba(255,255,255,.92)}
+.brand svg{color:var(--accent)}
+.nav li a{border-radius:6px}
+.nav li a.on,.nav li a:hover{background:var(--soft);color:var(--accent)}
+.aistat.on i{background:var(--green)}
+.progress{background:var(--accent)}
+
+/* hero */
+.hero{background:linear-gradient(180deg,#fff 0%,var(--paper) 100%)}
+.hero h1{font-weight:700}
+.hero h1 span{color:var(--accent);font-style:normal;font-weight:700;background:linear-gradient(transparent 62%,var(--amber-soft) 62%)}
+.toc a i{color:var(--accent)}
+.term-hero{border-radius:12px;background:#1E2229;box-shadow:0 12px 30px rgba(20,22,26,.12);position:relative;padding-top:40px}
+.term-hero:before{content:"";position:absolute;left:14px;top:14px;width:10px;height:10px;border-radius:50%;background:#E5533D;box-shadow:16px 0 0 #F0B132,32px 0 0 #2F9E6E}
+.term-hero .p{color:#8FA6FF}
+.term-hero .o{color:#9FD8B8}
+
+/* components */
+.split span{background:#fff}
+.split .nm{border-radius:8px 0 0 8px}
+.split .ex{background:var(--soft);color:var(--accent);border-radius:0 8px 8px 0}
+.verdict div{border-top:3px solid var(--accent)}
+.verdict div:nth-child(2){border-color:var(--amber)}
+.verdict div:nth-child(3){border-color:var(--green)}
+.ftype .ic{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px}
+.ly{border-radius:8px;border-color:var(--rule)}
+.ly.on{border-color:var(--accent);background:var(--soft)}
+.ly.lit{border-color:var(--amber);background:var(--amber-soft)}
+.rec{border-radius:6px;border-color:var(--rule2)}
+.rec.read{background:var(--amber-soft);border-color:var(--amber)}
+.rec.hit{background:var(--accent);border-color:var(--accent)}
+.rec.target{box-shadow:inset 0 0 0 2px var(--coral)}
+.ix{border-radius:6px}
+.ix.lit{background:var(--amber-soft);border-color:var(--amber)}
+.count{color:var(--ink);font-weight:700}
+.cmpbar .b{border-radius:20px}
+.cmpbar .b i{border-radius:20px;background:var(--accent3)}
+.cmpbar.on .b i{background:var(--amber)}
+.modes button.on{border-bottom-color:var(--green)}
+.term{border-radius:0 0 10px 0;background:#1E2229}
+@media(max-width:920px){.term{border-radius:0 0 10px 10px}}
+.term-out .c b{color:#8FA6FF}
+.term-out .ok{color:#9FD8B8}
+.term-out .er{color:#F4A595}
+.term-out .ai{border-left-color:#8FA6FF}
+.term-in span{color:#8FA6FF}
+.quick button{border-radius:20px}
+.quick button.aiq{border-color:#8FA6FF;color:#B9C7FF}
+.pc li:before{color:var(--green)}
+.octal b{color:var(--violet)}
+.accres{border-radius:8px}
+.accres.yes{background:var(--green-soft);border-left-color:var(--green)}
+.cards4 .label{color:var(--violet)}
+.take{border-top:3px solid var(--accent);border-radius:10px}
+.take:nth-child(2){border-top-color:var(--amber)}
+.take:nth-child(3){border-top-color:var(--green)}
+.take:nth-child(4){border-top-color:var(--violet)}
+.take p{font-family:"IBM Plex Sans",sans-serif;font-weight:500}
+footer{background:#fff}
+.fab{background:var(--accent);border-color:var(--accent);border-radius:24px;padding:11px 18px;box-shadow:0 6px 18px rgba(59,91,219,.28)}
+.fab:hover{background:#2F4BC0;border-color:#2F4BC0}
+.chat{border-color:var(--rule2);border-radius:14px;box-shadow:0 20px 50px rgba(20,22,26,.18)}
+.chat-h{background:#FCFCFA}
+.m.bot{border-left-color:var(--accent)}
+.m.me{background:var(--soft);border-radius:10px}
+.send{background:var(--accent);border-radius:8px}
+.chat textarea{border-radius:8px}
+.sugg button{border-radius:20px}
+.org-why{border-top-style:dashed}
+/* ============ MORE COLOUR ============ */
+.brand{font-family:"IBM Plex Sans",sans-serif;font-size:18px;font-weight:700;letter-spacing:-.02em}
+.brand em{font-style:normal;color:var(--accent)}
+.brand svg{width:22px;height:22px}
+section:nth-of-type(even){background:none;border:0}
+#files{background:linear-gradient(180deg,#F2F5FF,#F8F9FF)}
+#access{background:linear-gradient(180deg,#FFF8E8,#FFFBF2)}
+#directories{background:linear-gradient(180deg,#ECF7F1,#F5FBF8)}
+#protection{background:linear-gradient(180deg,#F4F0FE,#F9F7FF)}
+#organizer{background:linear-gradient(180deg,#FFF0EC,#FFF7F5)}
+#takeaways{background:#fff}
+section+section{border-top:1px solid rgba(0,0,0,.05)}
+.kicker b{background:var(--sec);color:#fff}
+.head h2{position:relative;padding-bottom:12px}
+.head h2:after{content:"";position:absolute;left:0;bottom:0;width:56px;height:4px;border-radius:4px;background:var(--sec)}
+.whead{background:var(--sec-soft);color:var(--ink);border-bottom-color:rgba(0,0,0,.06);font-weight:500}
+.win{border-color:rgba(0,0,0,.08);box-shadow:0 2px 10px rgba(20,22,26,.05)}
+.box{box-shadow:0 2px 10px rgba(20,22,26,.05)}
+.ftype{border-top:4px solid var(--accent)}
+.grid.g3 .ftype:nth-child(2){border-top-color:var(--amber)}
+.grid.g3 .ftype:nth-child(3){border-top-color:var(--green)}
+.grid.g3 .ftype:nth-child(2) .ic{background:var(--amber-soft);color:#A8700A}
+.grid.g3 .ftype:nth-child(3) .ic{background:var(--green-soft);color:var(--green)}
+.cards4 .box{border-top:4px solid var(--violet)}
+.cards4 .box:nth-child(2){border-top-color:var(--accent)}
+.cards4 .box:nth-child(3){border-top-color:var(--green)}
+.cards4 .box:nth-child(4){border-top-color:var(--amber)}
+#access .btn:not(.line){background:#E09A12;border-color:#E09A12}
+#access .btn:not(.line):hover{background:#C98A0E;border-color:#C98A0E}
+#access .seg button.on{background:#E09A12}
+#directories .modes button.on{color:var(--green)}
+#protection .pm input[type=checkbox]{accent-color:var(--violet)}
+.hero{background:radial-gradient(600px 320px at 85% 20%,rgba(59,91,219,.13),transparent 70%),radial-gradient(500px 300px at 10% 90%,rgba(240,177,50,.16),transparent 70%),radial-gradient(420px 260px at 55% 100%,rgba(47,158,110,.10),transparent 70%),#fff}
+.hero h1{font-size:clamp(38px,5.4vw,60px);line-height:1.05}
+.hero h1 span{background:linear-gradient(transparent 60%,#FFE3A3 60%)}
+.toc a i{background:var(--soft);color:var(--accent);border-radius:20px;padding:0 7px;font-size:11px;height:18px;line-height:18px;margin-top:2px}
+.toc a:nth-child(2) i{background:var(--amber-soft);color:#A8700A}
+.toc a:nth-child(3) i{background:var(--green-soft);color:var(--green)}
+.toc a:nth-child(4) i{background:var(--violet-soft);color:var(--violet)}
+.toc a:nth-child(5) i{background:var(--coral-soft);color:var(--coral)}
+.take{border-top:0;border-left:5px solid var(--accent);background:#F2F5FF}
+.take:nth-child(2){background:var(--amber-soft);border-left-color:var(--amber)}
+.take:nth-child(3){background:var(--green-soft);border-left-color:var(--green)}
+.take:nth-child(4){background:var(--violet-soft);border-left-color:var(--violet)}
+footer{background:linear-gradient(180deg,#fff,#F2F5FF)}
+.chat-h{background:var(--soft)}
+.chat-h b{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z" fill="#FFD66B" stroke="#C98A0E"/><path d="M11 11v4.5M9.5 11h3M9.4 15.5h3.2" stroke="#3B5BDB" stroke-width="1.6" stroke-linecap="round"/></svg><span>Folder<em>Lab</em></span></a>
+    <ul id="navlinks">
+      <li><a href="#files">Files</a></li>
+      <li><a href="#access">Access methods</a></li>
+      <li><a href="#directories">Directories</a></li>
+      <li><a href="#protection">Sharing &amp; protection</a></li>
+      <li><a href="#organizer">AI organizer</a></li>
+    </ul>
+    <span class="aistat" id="aiStat"><i></i>AI: checking</span>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker"><b>FolderLab</b> OS · Module 4 · File system interface</div>
+      <h1>Learn files &amp; <span>directories</span> by doing.</h1>
+      <p class="sub">What a file is, how programs read it, and how an operating system keeps thousands of them organised. Every section is something you can try, with AI to help along the way.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn" href="#directories">Try the file system →</a>
+        <a class="btn line" href="#organizer">Let AI organise your files</a>
+      </div>
+      <nav class="toc">
+        <a href="#files"><i>01</i>The file concept</a>
+        <a href="#access"><i>02</i>Access methods</a>
+        <a href="#directories"><i>03</i>Directory structures</a>
+        <a href="#protection"><i>04</i>Sharing &amp; protection</a>
+        <a href="#organizer"><i>05</i>AI file organiser</a>
+        <a href="#takeaways"><i>06</i>Takeaways</a>
+      </nav>
+    </div>
+    <div class="term-hero" id="heroTerm" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- 01 FILES -->
+<section id="files">
+  <div class="wrap">
+    <div class="head">
+      <div class="kicker"><b>01</b> The file concept</div>
+      <h2>What is a file?</h2>
+      <p class="lede">A file is a <b>named collection of data</b> stored on a device like a hard disk or SSD. It can hold text, images, audio, video or program code. Type any name below to take it apart.</p>
+    </div>
+    <div data-win="filename_analyzer" class="box fname">
+      <div class="label" style="margin-bottom:8px">File name</div>
+      <div class="fname-row"><input type="text" id="fnIn" value="report.final.pdf" spellcheck="false" aria-label="File name"></div>
+      <div class="chips-try" id="fnChips"><button>main.py</button><button>holiday.jpg</button><button>/dev/sda</button><button>Documents/</button><button>README</button><button>song.mp3</button></div>
+      <div id="fnSplit"></div>
+      <div class="verdict" id="fnVerdict"></div>
+    </div>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="box ftype"><div class="ic">TYPE 1</div><h3>Regular files</h3><p>The most common kind: data that users and programs read and change directly.</p><div class="eg"><span class="tag">notes.txt</span><span class="tag">photo.jpg</span><span class="tag">main.c</span></div></div>
+      <div class="box ftype"><div class="ic">TYPE 2</div><h3>Special (device) files</h3><p>Stand for hardware such as printers, keyboards or disks, so programs can talk to devices like files.</p><div class="eg"><span class="tag">/dev/sda</span><span class="tag">/dev/tty</span></div></div>
+      <div class="box ftype"><div class="ic">TYPE 3</div><h3>Directory files</h3><p>Containers that hold the names, attributes and locations of other files, forming a tree.</p><div class="eg"><span class="tag">Documents/</span><span class="tag">/home/</span></div></div>
+    </div>
+
+    <div class="subh"><h3>How a request travels through the file system</h3><span class="label">click a layer · or send a request</span></div>
+    <div class="layers">
+      <div data-win="fs_layers" class="box stack" id="stack">
+        <button class="ly" data-l="0"><b>User application</b><small>you</small></button>
+        <button class="ly" data-l="1"><b>Logical file system</b><small>names · permissions</small></button>
+        <button class="ly" data-l="2"><b>Virtual file system (VFS)</b><small>one interface</small></button>
+        <button class="ly" data-l="3"><b>Physical file system</b><small>blocks</small></button>
+        <button class="ly" data-l="4"><b>Partitions 1 · 2 · 3</b><small>the device</small></button>
+      </div>
+      <div data-win="open_request.log" class="box ly-detail">
+        <h3 id="lyTitle">Open a file, layer by layer</h3>
+        <p id="lyText">When you double-click a file, the request passes down through several layers before any data comes off the disk. Press the button to watch it.</p>
+        <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="flowBtn">▶ Open “report.pdf”</button></div>
+        <div class="flowlog" id="flowLog"></div>
+        <div class="label" style="margin-top:14px">Popular file systems</div>
+        <div class="eg" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><span class="tag">FAT · older Windows</span><span class="tag">NTFS · Windows</span><span class="tag">ext · Linux</span><span class="tag">HFS · older macOS</span><span class="tag">APFS · Mac &amp; iOS</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 ACCESS -->
+<section id="access">
+  <div class="wrap">
+    <div class="head">
+      <div class="kicker"><b>02</b> Access methods</div>
+      <h2>Three ways to read a file</h2>
+      <p class="lede">An access method is how the OS finds a record inside a file. Pick a method and a record, then press Read to see how many records it has to touch.</p>
+    </div>
+    <div data-win="access_simulator" class="box acc">
+      <div class="acc-top">
+        <div><span class="label" style="display:block;margin-bottom:6px">Method</span><div class="seg" id="amSeg"><button class="on" data-m="seq">Sequential</button><button data-m="dir">Direct</button><button data-m="idx">Index sequential</button></div></div>
+        <div style="flex:1"><span class="label" style="display:flex;justify-content:space-between;margin-bottom:6px"><span>Record to find</span><span id="tgtV">R11</span></span><input type="range" id="tgt" min="0" max="15" value="11"></div>
+        <div><button class="btn" id="readBtn">▶ Read</button></div>
+      </div>
+      <div class="tape" id="tape"></div>
+      <div class="index" id="index"><span class="label" style="margin-right:6px">Index</span></div>
+      <div class="acc-out">
+        <div>
+          <div class="label">Records touched</div>
+          <div class="count"><span id="touched">0</span><small>to reach <span id="tgtV2">R11</span></small></div>
+          <p class="acc-desc" id="amDesc"></p>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:6px">Same record, each method</div>
+          <div id="amCmp"></div>
+          <p class="note">Direct access needs a device that can jump anywhere, like a disk. Sequential access suits tape.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 DIRECTORIES -->
+<section id="directories">
+  <div class="wrap">
+    <div class="head">
+      <div class="kicker"><b>03</b> Directory structures</div>
+      <h2>Directory structures you can try</h2>
+      <p class="lede">A working mini file system. Pick a structure, then type commands or tap the suggestions. Each structure enforces its own rules, so you can see exactly what it allows and what it refuses.</p>
+    </div>
+    <div class="box" data-win="directory_explorer · mini file system">
+      <div class="modes" id="modes"></div>
+      <div class="sb">
+        <div class="sb-left">
+          <div class="diagram" id="diagram"></div>
+          <div class="dstat" id="dstat"></div>
+          <div class="mode-info" id="modeInfo"></div>
+        </div>
+        <div class="term">
+          <div class="term-out" id="termOut"></div>
+          <div class="quick" id="quick"></div>
+          <form class="term-in" id="termForm"><span id="prompt">/ $</span><input id="termIn" type="text" autocomplete="off" spellcheck="false" placeholder="type help" aria-label="Command"></form>
+        </div>
+      </div>
+    </div>
+    <p class="note">Commands: <code>ls</code> · <code>cd name</code> · <code>cd ..</code> · <code>pwd</code> · <code>mkdir name</code> · <code>touch name</code> · <code>rm name</code> · <code>ln /path/to/item newname</code> · <code>ask question</code> (AI) · <code>reset</code> · <code>help</code>. Click a folder in the diagram to <code>cd</code> into it.</p>
+  </div>
+</section>
+
+<!-- 04 PROTECTION -->
+<section id="protection">
+  <div class="wrap">
+    <div class="head">
+      <div class="kicker"><b>04</b> Sharing &amp; protection</div>
+      <h2>Sharing files safely</h2>
+      <p class="lede">File sharing lets people collaborate, but it brings risks. Protection keeps files confidential, unaltered and available. Set the permissions below, then test who can do what.</p>
+    </div>
+    <div class="perm">
+      <div data-win="permissions · report.txt" class="box pm">
+        <h3>Permissions on <span style="font-family:var(--mono);font-weight:500">report.txt</span></h3>
+        <table>
+          <thead><tr><th></th><th>Read (r)</th><th>Write (w)</th><th>Execute (x)</th></tr></thead>
+          <tbody id="permBody"></tbody>
+        </table>
+        <div class="octal"><div><div class="label">Octal</div><b id="octal">754</b></div><div><div class="label">Symbolic</div><span id="symb">-rwxr-xr--</span></div><div><div class="label">Command</div><span id="chmod" style="font-size:14px">chmod 754 report.txt</span></div></div>
+      </div>
+      <div data-win="access_tester" class="box pm">
+        <h3>Test an access</h3>
+        <p style="color:var(--ink2);font-size:15px;margin-top:6px">Owner is <b>ana</b>, the group is <b>students</b> (ana and ravi), and <b>guest</b> is everyone else.</p>
+        <div class="tryacc">
+          <label><span class="label">User</span><select id="who"><option value="ana">ana (owner)</option><option value="ravi">ravi (group: students)</option><option value="guest">guest (others)</option></select></label>
+          <label><span class="label">Action</span><select id="act"><option value="r">read</option><option value="w">write</option><option value="x">execute</option></select></label>
+        </div>
+        <div class="accres" id="accres"></div>
+        <div class="chips-try" id="permPresets"><button data-o="600">600 · private</button><button data-o="644">644 · everyone reads</button><button data-o="755">755 · program</button><button data-o="777">777 · wide open</button></div>
+      </div>
+    </div>
+
+    <div class="subh"><h3>Ways to share files</h3></div>
+    <div class="grid g4 cards4">
+      <div class="box"><span class="label">P2P</span><h3>Peer-to-peer</h3><p>Users connect directly, with no central server. Often used for large files.</p></div>
+      <div class="box"><span class="label">Cloud</span><h3>Cloud-based</h3><p>Files live on remote servers you reach from any device, like Google Drive, Dropbox or OneDrive.</p></div>
+      <div class="box"><span class="label">Direct</span><h3>Direct transfer</h3><p>Device to device over Bluetooth or Wi-Fi Direct, common on phones.</p></div>
+      <div class="box"><span class="label">Media</span><h3>Removable media</h3><p>USB drives or external disks passed from hand to hand.</p></div>
+    </div>
+    <div class="subh"><h3>Risks, and how to protect against them</h3></div>
+    <div class="grid g2">
+      <div class="box pm" style="padding:20px 22px">
+        <div class="label" style="margin-bottom:6px">Risks</div>
+        <div class="cards4" style="font-size:15px">
+          <p style="padding:9px 0;border-bottom:1px solid var(--rule)"><b>Malware &amp; viruses</b>: files from untrusted sources can infect devices.</p>
+          <p style="padding:9px 0;border-bottom:1px solid var(--rule)"><b>Data breaches</b>: badly secured cloud or P2P sharing can leak sensitive data.</p>
+          <p style="padding:9px 0;border-bottom:1px solid var(--rule)"><b>Legal trouble</b>: sharing copyrighted material can bring lawsuits and fines.</p>
+          <p style="padding:9px 0"><b>Identity theft</b>: logins or personal details shared by accident.</p>
+        </div>
+      </div>
+      <div class="box pm" style="padding:20px 22px">
+        <div class="label" style="margin-bottom:6px">Protection methods</div>
+        <div style="font-size:15px">
+          <p style="padding:9px 0;border-bottom:1px solid var(--rule)"><b>Encryption</b>: data is coded and readable only with the key. Use when sending confidential files.</p>
+          <p style="padding:9px 0;border-bottom:1px solid var(--rule)"><b>Password protection</b>: a password is needed to open the file.</p>
+          <p style="padding:9px 0;border-bottom:1px solid var(--rule)"><b>Secure transfer protocols</b>: SFTP and HTTPS encrypt files in transit.</p>
+          <p style="padding:9px 0"><b>Firewall</b>: watches network traffic and blocks unauthorised access.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 AI ORGANIZER -->
+<section id="organizer">
+  <div class="wrap">
+    <div class="head">
+      <div class="kicker"><b>05</b> AI file organiser</div>
+      <h2>Let AI build a directory tree</h2>
+      <p class="lede">Paste a messy list of file names. AI groups them into a tree-structured directory and explains its choices. Then open the result in the file system above and explore it with commands.</p>
+    </div>
+    <div class="org">
+      <div data-win="ai_organizer · input" class="box org-in">
+        <label><span class="label" style="display:block;margin-bottom:6px">Your files (comma or new line separated)</span>
+        <textarea id="orgIn" spellcheck="false">IMG_2041.jpg, resume_final.docx, main.py, utils.py, holiday_beach.png, taxes_2025.pdf, song1.mp3, os_module4_notes.pdf, budget.xlsx, setup.exe, README.md, lecture3.mp4, podcast_ep2.mp3, screenshot.png, marks.csv</textarea></label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ai" id="orgBtn">✦ Organise with AI</button>
+          <button class="btn line" id="orgLoad" disabled>Open in file system ↑</button>
+        </div>
+        <p class="note" style="margin-top:0" id="orgNote">Without AI access, the organiser falls back to simple extension rules.</p>
+      </div>
+      <div data-win="proposed_tree/" class="box org-out">
+        <div class="label" style="display:flex;justify-content:space-between"><span>Proposed tree</span><span id="orgSrc"></span></div>
+        <div class="od" id="orgDiag"><p class="empty">Your organised tree will appear here.</p></div>
+        <div class="org-why" id="orgWhy" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="wrap">
+    <div class="head"><div class="kicker"><b>06</b> Summary</div><h2>Key takeaways</h2></div>
+    <div class="grid g4">
+      <div class="box take"><div class="n">01</div><p>A file is named data; its extension hints at what kind.</p></div>
+      <div class="box take"><div class="n">02</div><p>Sequential reads in order, direct jumps straight there, and indexed uses an index first.</p></div>
+      <div class="box take"><div class="n">03</div><p>From single-level to general graph, each structure trades simplicity for flexibility.</p></div>
+      <div class="box take"><div class="n">04</div><p>Permissions, encryption and secure protocols keep shared files safe.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h2>Thanks for visiting FolderLab. Questions?</h2>
+    <p>Open “Ask AI” at the bottom right, or type <code>ask</code> followed by a question in the file system terminal.</p>
+    <p style="margin-top:14px;font-family:var(--mono)">Based on Module 4 lecture notes · File System Interface · Educational use</p>
+  </div>
+</footer>
+
+<button class="fab" id="fab">✦ Ask AI</button>
+<div class="chat" id="chat" role="dialog" aria-label="AI tutor">
+  <div class="chat-h"><div><b>✦ FolderLab AI</b><small id="botStatus">connecting…</small></div><button class="x" id="closeChat" aria-label="Close">×</button></div>
+  <div class="msgs" id="msgs"></div>
+  <div class="sugg" id="sugg"></div>
+  <form id="chatForm"><textarea id="chatIn" rows="1" placeholder="Ask about files, directories, access…"></textarea><button class="send" id="sendBtn" aria-label="Send">→</button></form>
+  <div class="disc">AI can make mistakes · check against your notes</div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+$$('[data-win]').forEach(el=>{const w=document.createElement('div');w.className='win';w.innerHTML=`<div class="whead"><i></i>${esc(el.dataset.win)}</div>`;el.parentNode.insertBefore(w,el);w.appendChild(el);});
+
+
+/* ================= AI core ================= */
+let sample=null, aiReady=false;
+const aiWaiters=[];
+function setAI(on,txt){aiReady=on;const s=$('#aiStat');s.classList.toggle('on',on);s.innerHTML=`<i></i>AI: ${txt||(on?'on':'offline')}`;$('#botStatus').textContent=on?'online · knows this module':'offline · answers from the notes';}
+(async()=>{try{sample=window.claude&&window.claude.use?await window.claude.use('sample'):null;}catch(e){sample=null;}setAI(!!sample);aiWaiters.forEach(f=>f());})();
+setTimeout(()=>{if(!sample)setAI(false);},11000);
+const NOTES=`Course notes (OS Module 4, File System Interface):
+- File: named collection of data on a storage device (text, images, audio, video, code). Name has two parts: name and extension, separated by a period.
+- File types: regular (data users/apps read and change), special/device files (interface to hardware like printers, keyboards), directory files (hold names, attributes, locations of other files; tree-like).
+- Layers: user application -> logical file system (metadata, names, directories, permissions) -> virtual file system (bridge so different file systems work under one interface) -> physical file system (actual data blocks) -> partitions.
+- Popular file systems: FAT, NTFS (permissions, compression, encryption), ext (Linux), HFS (macOS), APFS (Apple).
+- Access methods: sequential (records in order from the start, pointer moves forward automatically, suits tape); direct (read/write any block by its block number, random access); index sequential (built on sequential, an index like a book index holds pointers to blocks; search index then jump directly).
+- Directory advantages: efficiency (find files faster), naming (two users can use same name), grouping (by property).
+- Directory structures: single-level (one directory for everyone; simple, fast for small systems; name collisions, slow when large, no grouping); two-level (Master File Directory points to a User File Directory per user; same file names for different users, security; limited sharing, no subdirectories); tree/hierarchical (root at top, subdirectories, absolute/relative paths, scalable; sharing between users prevented, deep trees get complex); acyclic graph (files/subdirectories shared via links, changes visible to all sharers; complex to implement, must delete all references to remove a file); general graph (cycles allowed, most flexible; expensive, needs garbage collection).
+- File sharing types: peer-to-peer, cloud-based (Google Drive, Dropbox, OneDrive), direct transfer (Bluetooth, Wi-Fi Direct), removable media. Risks: malware, data breaches, legal consequences, identity theft. Protection: encryption, password protection, secure transfer protocols (SFTP, HTTPS), firewall.`;
+async function askAI(prompt,opts={}){
+  if(!aiReady) throw {code:'offline'};
+  try{return await sample(prompt,{cache:false,modelTier:'quick',...opts});}
+  catch(err){if(err&&err.code==='not_granted')setAI(false);throw err;}
+}
+
+/* ================= nav ================= */
+const secs=$$('section[id]');
+function onScroll(){const h=document.documentElement;$('#progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';let cur='';secs.forEach(s=>{if(s.getBoundingClientRect().top<120)cur=s.id;});$$('#navlinks a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ================= hero terminal ================= */
+(async function(){
+  const el=$('#heroTerm');
+  const script=[['$ ','pwd'],['o','/home/ana'],['$ ','ls'],['o','docs/  projects/  notes.txt'],['$ ','mkdir os-module4'],['$ ','cd os-module4'],['$ ','touch files.txt directories.txt'],['$ ','ls'],['o','directories.txt  files.txt'],['$ ','pwd'],['o','/home/ana/os-module4']];
+  while(true){
+    let html='';
+    for(const [k,t] of script){
+      if(k==='o'){html+=`<div class="o">${t}</div>`;el.innerHTML=html+'<span class="p">$ </span><span class="cur"></span>';await sleep(500);continue;}
+      for(let i=1;i<=t.length;i++){el.innerHTML=html+`<span class="p">$ </span>${esc(t.slice(0,i))}<span class="cur"></span>`;await sleep(45);}
+      html+=`<div><span class="p">$ </span>${esc(t)}</div>`;await sleep(350);
+    }
+    await sleep(2600);
+  }
+})();
+
+/* ================= file name analyser ================= */
+const EXT={pdf:['Document','Portable document'],doc:['Document','Word document'],docx:['Document','Word document'],txt:['Document','Plain text'],md:['Document','Markdown text'],csv:['Data','Comma-separated values'],xlsx:['Data','Spreadsheet'],json:['Data','Structured data'],jpg:['Image','JPEG photo'],jpeg:['Image','JPEG photo'],png:['Image','PNG image'],gif:['Image','Animated image'],svg:['Image','Vector image'],mp3:['Audio','MP3 audio'],wav:['Audio','Wave audio'],mp4:['Video','MP4 video'],mkv:['Video','Matroska video'],py:['Source code','Python source'],c:['Source code','C source'],cpp:['Source code','C++ source'],java:['Source code','Java source'],js:['Source code','JavaScript source'],html:['Source code','Web page'],exe:['Executable','Windows program'],sh:['Executable','Shell script'],zip:['Archive','Compressed archive'],iso:['Archive','Disk image'],pptx:['Document','Slide deck']};
+function analyse(raw){
+  const s=raw.trim();
+  if(!s) return null;
+  if(s.startsWith('/dev/')) return {name:s,ext:'',kind:'Special (device) file',cat:'Hardware interface',desc:'Represents a device, so programs can read and write it like a file'};
+  if(s.endsWith('/')) return {name:s.slice(0,-1),ext:'',kind:'Directory file',cat:'Container',desc:'Holds names, attributes and locations of other files',dir:true};
+  const base=s.split('/').pop(); const i=base.lastIndexOf('.');
+  if(i<=0||i===base.length-1) return {name:base,ext:'',kind:'Regular file',cat:'Unknown type',desc:'No extension, so the OS cannot guess the type from the name alone'};
+  const ext=base.slice(i+1).toLowerCase(), e=EXT[ext];
+  return {name:base.slice(0,i),ext:base.slice(i+1),kind:ext==='exe'||ext==='sh'?'Regular file (executable)':'Regular file',cat:e?e[0]:'Unrecognised',desc:e?e[1]:`“.${ext}” is not a common extension`};
+}
+function renderFn(){
+  const a=analyse($('#fnIn').value);
+  if(!a){$('#fnSplit').innerHTML='';$('#fnVerdict').innerHTML='';return;}
+  $('#fnSplit').innerHTML=`<div class="split"><span class="nm">${esc(a.name)||'&nbsp;'}</span>${a.ext?`<span class="dot">.</span><span class="ex">${esc(a.ext)}</span>`:a.dir?'<span class="dot">/</span>':''}</div><div class="split-lab"><span>← name</span>${a.ext?'<span>extension →</span>':''}</div>`;
+  $('#fnVerdict').innerHTML=`<div><small>File type</small><b>${a.kind}</b></div><div><small>Category</small><b>${a.cat}</b></div><div><small>Meaning</small><b style="font-weight:500">${esc(a.desc)}</b></div>`;
+}
+$('#fnIn').addEventListener('input',renderFn);
+$$('#fnChips button').forEach(b=>b.addEventListener('click',()=>{$('#fnIn').value=b.textContent;renderFn();}));
+renderFn();
+
+/* ================= layers ================= */
+const LY=[
+ ['User application','The program you use, like a PDF reader or text editor, asks to read, write or delete a file.'],
+ ['Logical file system','Manages metadata: file names, directories and access permissions. It checks the name exists and that you may open it.'],
+ ['Virtual file system (VFS)','A bridge that lets different file systems (NTFS, ext4, FAT…) work under one common interface, so apps need not care which one holds the file.'],
+ ['Physical file system','Handles the actual data blocks on the disk: which blocks belong to the file and where they are.'],
+ ['Partitions','Divisions of the storage device where the file’s bytes are physically stored.']
+];
+function showLayer(i){$$('.ly').forEach((b,k)=>b.classList.toggle('on',k===i));$('#lyTitle').textContent=LY[i][0];$('#lyText').textContent=LY[i][1];}
+$$('.ly').forEach(b=>b.addEventListener('click',()=>showLayer(+b.dataset.l)));
+let flowing=false;
+$('#flowBtn').addEventListener('click',async()=>{
+  if(flowing)return;flowing=true;$('#flowBtn').disabled=true;const log=$('#flowLog');log.innerHTML='';
+  const steps=['App calls open("report.pdf")','Finds “report.pdf” in the directory · permission OK','VFS hands the request to the NTFS driver','File maps to blocks 1204–1211','Partition 1 returns the bytes ✓'];
+  for(let i=0;i<5;i++){$$('.ly').forEach((b,k)=>{b.classList.toggle('lit',k===i);b.classList.remove('on');});log.insertAdjacentHTML('beforeend',`<div>${i+1}. ${steps[i]}</div>`);await sleep(750);}
+  await sleep(300);$$('.ly').forEach(b=>b.classList.remove('lit'));log.insertAdjacentHTML('beforeend','<div style="color:var(--accent)">Data flows back up to the app, and the PDF opens.</div>');
+  flowing=false;$('#flowBtn').disabled=false;
+});
+
+/* ================= access methods ================= */
+let am='seq', reading=false;
+const AMD={seq:'Sequential: starts at the beginning and reads one record after another. The pointer moves forward automatically after each read.',dir:'Direct: jumps straight to the record using its block number. No earlier records are read.',idx:'Index sequential: first looks up the index (like the index at the back of a book), jumps to that block, then reads forward a short way.'};
+const tape=$('#tape');tape.innerHTML=Array.from({length:16},(_,i)=>`<div class="rec" data-i="${i}">R${i}<small>blk ${i}</small></div>`).join('');
+$('#index').innerHTML+=['R0–R3 → blk 0','R4–R7 → blk 4','R8–R11 → blk 8','R12–R15 → blk 12'].map((t,i)=>`<span class="ix" data-x="${i}">${t}</span>`).join('');
+const cost=(m,t)=>m==='seq'?t+1:m==='dir'?1:1+(t%4)+1;
+function amStatic(){
+  const t=+$('#tgt').value;$('#tgtV').textContent='R'+t;$('#tgtV2').textContent='R'+t;
+  $$('.rec').forEach(r=>{r.className='rec'+(+r.dataset.i===t?' target':'');});$$('.ix').forEach(x=>x.classList.remove('lit'));
+  $('#index').classList.toggle('on',am==='idx');$('#amDesc').textContent=AMD[am];$('#touched').textContent='–';
+  const names={seq:'Sequential',dir:'Direct',idx:'Index seq.'};const mx=16;
+  $('#amCmp').innerHTML=['seq','dir','idx'].map(m=>`<div class="cmpbar ${m===am?'on':''}"><span>${names[m]}</span><div class="b"><i style="width:${cost(m,t)/mx*100}%"></i></div><span>${cost(m,t)}</span></div>`).join('');
+}
+async function amRead(){
+  if(reading)return;reading=true;$('#readBtn').disabled=true;amStatic();
+  const t=+$('#tgt').value,recs=$$('.rec');let n=0;const touch=(i,hit)=>{recs[i].classList.add(hit?'hit':'read');n++;$('#touched').textContent=n;};
+  if(am==='seq'){for(let i=0;i<=t;i++){touch(i,i===t);await sleep(170);}}
+  else if(am==='dir'){await sleep(250);touch(t,true);}
+  else{const x=Math.floor(t/4);$$('.ix')[x].classList.add('lit');n++;$('#touched').textContent=n;await sleep(500);for(let i=x*4;i<=t;i++){touch(i,i===t);await sleep(220);}}
+  reading=false;$('#readBtn').disabled=false;
+}
+$$('#amSeg button').forEach(b=>b.addEventListener('click',()=>{am=b.dataset.m;$$('#amSeg button').forEach(x=>x.classList.toggle('on',x===b));amStatic();amRead();}));
+$('#tgt').addEventListener('input',amStatic);$('#readBtn').addEventListener('click',amRead);
+amStatic();
+
+/* ================= directory sandbox ================= */
+const MODES={
+ single:{t:'Single-level',d:'One directory holds every file for every user. Simple, but names must be unique.',pro:['Simple to implement','Fast for small systems'],con:['Name collisions between users','Slow to search when large','No grouping of files'],quick:['ls','touch test.c','touch report.txt','mkdir docs','rm song.mp3']},
+ two:{t:'Two-level',d:'A Master File Directory (MFD) points to one User File Directory (UFD) per user. Users can reuse names, but cannot make subfolders.',pro:['Same file name for different users','Users are kept apart (security)','Easy searching'],con:['Sharing between users is limited','No subdirectories','Cannot group files'],quick:['ls','cd ravi','touch notes.txt','mkdir projects','cd ..','mkdir meera']},
+ tree:{t:'Tree',d:'The common PC layout: a root at the top, with folders inside folders. Every file has exactly one parent and one absolute path.',pro:['Subdirectories allowed','Efficient searching and grouping','Absolute and relative paths','Scales well'],con:['Files cannot be shared between users','Deep trees make searching complex'],quick:['cd home','cd ana','mkdir os-notes','cd os-notes','touch files.txt','pwd','ln /home/ravi/music shared']},
+ acyclic:{t:'Acyclic graph',d:'Files and folders can be shared through links, so one item appears in several places. Loops are not allowed.',pro:['Files shared between users','A change is seen by every sharer','Flexible'],con:['Harder to implement','Deleting needs care: remove every reference'],quick:['ls /home/ravi','ln /home/ana/project team','cd /home/ana','rm project','ls /home/ravi','ln /home ravi_home']},
+ general:{t:'General graph',d:'Links are allowed anywhere, even ones that loop back to an ancestor. Most flexible, but needs loop detection and garbage collection.',pro:['Most flexible structure','Cycles allowed'],con:['Expensive to implement','Needs garbage collection for unreachable items'],quick:['cd /home/ravi','ls','cd back','pwd','cd /','rm home','gc']}
+};
+const ORDER=['single','two','tree','acyclic','general'];
+let mode='tree', nodes={}, nid=0, rootId, cwdStack=[], history=[];
+function mk(name,type){const id='n'+(nid++);nodes[id]={id,name,type,children:[]};return id;}
+function add(parent,child){nodes[parent].children.push(child);return child;}
+function seed(m){
+  nodes={};nid=0;rootId=mk(m==='two'?'MFD':'/','dir');const R=rootId;
+  if(m==='single'){['notes.txt','test.c','photo.jpg','song.mp3'].forEach(f=>add(R,mk(f,'file')));}
+  else if(m==='two'){const a=add(R,mk('ana','dir')),r=add(R,mk('ravi','dir'));['test.c','notes.txt'].forEach(f=>add(a,mk(f,'file')));['test.c','game.exe'].forEach(f=>add(r,mk(f,'file')));}
+  else{
+    const home=add(R,mk('home','dir')),bin=add(R,mk('bin','dir'));add(bin,mk('ls','file'));
+    const ana=add(home,mk('ana','dir')),ravi=add(home,mk('ravi','dir'));
+    const docs=add(ana,mk('docs','dir'));add(docs,mk('report.docx','file'));add(ana,mk('test.c','file'));
+    const music=add(ravi,mk('music','dir'));add(music,mk('song.mp3','file'));
+    if(m==='acyclic'||m==='general'){const proj=add(ana,mk('project','dir'));add(proj,mk('plan.md','file'));add(ravi,proj);}
+    if(m==='general'){nodes[ravi].children.push(home);/* back link */ linkNames[ravi+'>'+home]='back';}
+  }
+  cwdStack=[R];
+}
+let linkNames={}; // display name for links whose name differs: key parent>child
+function childName(p,c){return linkNames[p+'>'+c]||nodes[c].name;}
+function cwd(){return cwdStack[cwdStack.length-1];}
+function pathOf(stack){if(mode==='two')return stack.length===1?'MFD':'MFD/'+stack.slice(1).map((id,i)=>childName(stack[i],id)).join('/');return '/'+stack.slice(1).map((id,i)=>childName(stack[i],id)).join('/');}
+function findChild(p,name){return nodes[p].children.find(c=>childName(p,c)===name);}
+function resolve(path,{wantStack=false}={}){
+  let stack=path.startsWith('/')?[rootId]:[...cwdStack];
+  for(const part of path.split('/').filter(Boolean)){
+    if(part==='.')continue;
+    if(part==='..'){if(stack.length>1)stack.pop();continue;}
+    const cur=stack[stack.length-1];if(nodes[cur].type!=='dir')return null;
+    const c=findChild(cur,part);if(!c)return null;stack.push(c);
+  }
+  return wantStack?stack:stack[stack.length-1];
+}
+function parentsOf(id){const out=[];for(const k in nodes)if(nodes[k].children.includes(id))out.push(k);return out;}
+function reachable(){const seen=new Set();const go=id=>{if(seen.has(id))return;seen.add(id);nodes[id].children.forEach(go);};go(rootId);return seen;}
+function hasCycle(){const color={};let cyc=false;const go=id=>{color[id]=1;for(const c of nodes[id].children){if(color[c]===1){cyc=true;}else if(!color[c])go(c);}color[id]=2;};for(const k in nodes)if(!color[k])go(k);return cyc;}
+function isAncestorOrSelf(target,stack){return stack.includes(target);}
+function wouldCycle(target,dest){ // linking target into dest creates cycle if dest reachable from target
+  const seen=new Set();const go=id=>{if(id===dest)return true;if(seen.has(id))return false;seen.add(id);return nodes[id].children.some(go);};return go(target);}
+function pathsTo(id){ // all simple paths from root (for messages), limited
+  const res=[];const go=(cur,stack)=>{if(res.length>4)return;if(cur===id){res.push(pathOf(stack));return;}for(const c of nodes[cur].children){if(stack.includes(c))continue;go(c,[...stack,c]);}};go(rootId,[rootId]);return res;}
+function cleanup(){ // delete nodes with zero parents (except root), repeat
+  let changed=true;const removed=[];
+  while(changed){changed=false;for(const k in nodes){if(k===rootId)continue;if(parentsOf(k).length===0){removed.push(nodes[k].name);delete nodes[k];for(const p in linkNames)if(p.includes(k))delete linkNames[p];changed=true;}}}
+  return removed;
+}
+/* terminal */
+const out=$('#termOut');
+function print(html,cls){out.insertAdjacentHTML('beforeend',`<div class="${cls||''}">${html}</div>`);out.scrollTop=out.scrollHeight;}
+function promptText(){return `${pathOf(cwdStack)} $`;}
+function okName(n){return /^[A-Za-z0-9._-]{1,24}$/.test(n)&&n!=='.'&&n!=='..';}
+function run(line,{silent}={}){
+  line=line.trim();if(!line)return;
+  print(`<span class="c"><b>${esc(promptText())}</b> ${esc(line)}</span>`);
+  const [cmd,...args]=line.split(/\s+/);const a0=args[0],a1=args[1];
+  const err=m=>{print(esc(m),'er');history.push(`${line} → ERROR: ${m}`);};
+  const ok=m=>{if(m)print(esc(m),'ok');history.push(`${line}${m?' → '+m:''}`);};
+  const C=cwd();
+  switch(cmd){
+    case 'help':print('ls [path] · cd name|..|/ · pwd · mkdir name · touch name · rm name · ln /path newname · gc · ask question · reset','in');break;
+    case 'pwd':ok(pathOf(cwdStack));break;
+    case 'ls':{const t=a0?resolve(a0):C;if(!t)return err(`ls: ${a0}: no such file or directory`);if(nodes[t].type!=='dir')return ok(nodes[t].name);
+      const st=a0?resolve(a0,{wantStack:true}):cwdStack;const p=st?st[st.length-1]:C;
+      const items=nodes[t].children.map(c=>{const nm=childName(t,c);const link=parentsOf(c).length>1;return nm+(nodes[c].type==='dir'?'/':'')+(link?' ↔':'');});
+      ok(items.length?items.join('   '):'(empty)');break;}
+    case 'cd':{
+      if(!a0||a0==='/'){cwdStack=[rootId];ok();break;}
+      if(mode==='single')return err('cd: single-level has only one directory. There is nowhere else to go.');
+      const st=resolve(a0,{wantStack:true});if(!st)return err(`cd: ${a0}: no such directory`);
+      const t=st[st.length-1];if(nodes[t].type!=='dir')return err(`cd: ${a0}: not a directory`);
+      if(st.length>40)return err('cd: path too deep');
+      cwdStack=st;ok();
+      if(mode==='general'&&new Set(st).size<st.length)print('note: you have gone round a cycle. The same folder appears twice in this path.','in');
+      break;}
+    case 'mkdir':case 'touch':{
+      if(!a0)return err(`${cmd}: missing name`);if(!okName(a0))return err(`${cmd}: use letters, digits, . _ - (max 24 chars)`);
+      const isDir=cmd==='mkdir';
+      if(mode==='single'&&isDir)return err('mkdir: not allowed. Single-level has no subdirectories, so everything sits in one place.');
+      if(mode==='two'){
+        if(isDir&&C!==rootId)return err('mkdir: not allowed. Two-level directories have no subfolders inside a user directory.');
+        if(!isDir&&C===rootId)return err('touch: files belong inside a user directory (UFD). Use cd ana first.');
+      }
+      if(findChild(C,a0)){
+        if(mode==='single')return err(`${cmd}: name collision. “${a0}” already exists and single-level needs every name to be unique, even across users.`);
+        return err(`${cmd}: “${a0}” already exists here`);
+      }
+      add(C,mk(a0,isDir?'dir':'file'));
+      ok(mode==='two'&&isDir?`created user directory (UFD) ${a0}/ in the MFD`:mode==='two'?`created ${a0} in ${pathOf(cwdStack)}. Other users can have their own ${a0} too.`:'');
+      break;}
+    case 'rm':{
+      if(!a0)return err('rm: missing name');const c=findChild(C,a0);if(!c)return err(`rm: ${a0}: not found here`);
+      const before=parentsOf(c).length;
+      nodes[C].children=nodes[C].children.filter(x=>x!==c);delete linkNames[C+'>'+c];
+      if(mode==='general'){const left=parentsOf(c).length;const reach=reachable();
+        if(left>0&&!reach.has(c)){ok(`removed ${a0}. It is still linked from inside a cycle but can no longer be reached from the root, so it is garbage. Run gc.`);break;}
+        if(left>0){ok(`removed this link. ${nodes[c].name} still has ${left} other reference(s).`);break;}
+        cleanup();ok(`deleted ${a0}`);break;}
+      if(before>1){const p=pathsTo(c);ok(`removed this reference. “${nodes[c].name}” still exists at ${p.join(', ')}. To delete it you must remove every reference.`);break;}
+      const gone=cleanup();ok(gone.length>1?`deleted ${a0} and ${gone.length-1} item(s) inside it`:`deleted ${a0}`);break;}
+    case 'ln':{
+      if(mode==='single'||mode==='two'||mode==='tree')return err(`ln: not allowed in a ${MODES[mode].t.toLowerCase()} structure. Each file has exactly one parent, so it cannot be shared. Try the acyclic graph.`);
+      if(!a0)return err('ln: usage: ln /path/to/item newname');
+      const t=resolve(a0);if(!t)return err(`ln: ${a0}: no such file or directory`);
+      const name=a1||nodes[t].name;if(!okName(name))return err('ln: bad name');
+      if(findChild(C,name))return err(`ln: “${name}” already exists here`);
+      if(t===C)return err('ln: cannot link a folder into itself');
+      if(mode==='acyclic'&&nodes[t].type==='dir'&&wouldCycle(t,C))return err(`ln: refused. Linking ${a0} here would create a cycle (a folder inside its own descendant). Acyclic graphs forbid loops. Try the general graph.`);
+      nodes[C].children.push(t);if(name!==nodes[t].name)linkNames[C+'>'+t]=name;
+      const cyc=mode==='general'&&nodes[t].type==='dir'&&wouldCycle(t,C);
+      ok(`linked ${a0} as ${name}. ${cyc?'This creates a cycle!':'Changes in either place are seen by both.'}`);break;}
+    case 'gc':{
+      if(mode!=='general')return ok('nothing to collect. Without cycles, deleting the last reference removes the item at once.');
+      const reach=reachable();const g=Object.keys(nodes).filter(k=>!reach.has(k));
+      g.forEach(k=>delete nodes[k]);for(const p in linkNames){const [x,y]=p.split('>');if(!nodes[x]||!nodes[y])delete linkNames[p];}
+      ok(g.length?`garbage collector freed ${g.length} unreachable item(s)`:'no garbage found');break;}
+    case 'reset':linkNames={};seed(mode);ok('reset to the starting example');break;
+    case 'ask':{const q=args.join(' ');if(!q)return err('ask: type a question after ask');history.push(line);termAsk(q);break;}
+    case 'clear':out.innerHTML='';break;
+    default:err(`${cmd}: command not found (type help)`);
+  }
+  if(history.length>30)history=history.slice(-30);
+  renderTree();
+}
+async function termAsk(q){
+  const holder=document.createElement('div');holder.className='ai';holder.textContent='thinking…';out.appendChild(holder);out.scrollTop=out.scrollHeight;
+  const ctx=`Current structure: ${MODES[mode].t}. Current directory: ${pathOf(cwdStack)}. Contents: ${describeFS()}. Recent commands:\n${history.slice(-8).join('\n')}`;
+  if(!aiReady){holder.innerHTML=mdInline(fallbackAnswer(q));return;}
+  try{
+    const r=await askAI(`You are a tutor inside a student's mini file-system sandbox website. ${NOTES}\n\n${ctx}\n\nAnswer the student's question in at most 90 words, plain sentences, refer to their actual folders when useful. Question: ${q}`,{onText:({text})=>{if(text){holder.innerHTML=mdInline(text);out.scrollTop=out.scrollHeight;}}});
+    holder.innerHTML=mdInline(r.text||'No answer.');
+  }catch(e){holder.innerHTML=mdInline(e&&e.code==='rate_limited'?'Too many requests. Wait a moment.':fallbackAnswer(q));}
+  out.scrollTop=out.scrollHeight;
+}
+function describeFS(){const lines=[];const seen=new Set();const go=(id,depth,p)=>{if(depth>4||lines.length>40)return;const nm=p?childName(p,id):nodes[id].name;lines.push('  '.repeat(depth)+nm+(nodes[id].type==='dir'?'/':'')+(seen.has(id)?' (link, seen above)':''));if(seen.has(id))return;seen.add(id);nodes[id].children.forEach(c=>go(c,depth+1,id));};go(rootId,0,null);return '\n'+lines.join('\n');}
+$('#termForm').addEventListener('submit',e=>{e.preventDefault();const v=$('#termIn').value;$('#termIn').value='';run(v);$('#prompt').textContent=promptText();});
+let hIdx=-1;const cmdHist=[];
+$('#termIn').addEventListener('keydown',e=>{if(e.key==='Enter'&&$('#termIn').value.trim()){cmdHist.unshift($('#termIn').value);hIdx=-1;}if(e.key==='ArrowUp'&&cmdHist.length){hIdx=Math.min(cmdHist.length-1,hIdx+1);$('#termIn').value=cmdHist[hIdx];e.preventDefault();}if(e.key==='ArrowDown'){hIdx=Math.max(-1,hIdx-1);$('#termIn').value=hIdx<0?'':cmdHist[hIdx];e.preventDefault();}});
+
+/* tree renderer (shared with organiser) */
+function drawGraph(g,opts){
+  // files under a folder are stacked in one column (explorer style); folders spread horizontally
+  const NW=opts.nw||100,NH=26,GX=14,GY=56,FS=NH+6;
+  const pos={},treeEdges=[],linkEdges=[],rails=[];let col=0,maxY=0;const order=[];
+  const X=c=>10+c*(NW+GX)+NW/2;
+  const place=(id,y,p)=>{
+    pos[id]={y,label:p?g.nameOf(p,id):g.nodes[id].name};order.push(id);maxY=Math.max(maxY,y+NH);
+    const kids=g.nodes[id].children, files=[], dirs=[];
+    for(const c of kids){ if(pos[c]||files.includes(c)||dirs.includes(c)){linkEdges.push([id,c]);continue;} (g.nodes[c].type==='dir'?dirs:files).push(c); }
+    const cols=[];
+    if(files.length){const fc=col++;files.forEach((f,k)=>{pos[f]={x:fc,y:y+GY+k*FS,label:g.nameOf(id,f)};order.push(f);maxY=Math.max(maxY,pos[f].y+NH);});rails.push([id,files]);cols.push(fc);}
+    for(const d of dirs){if(pos[d]){linkEdges.push([id,d]);continue;}place(d,y+GY,id);treeEdges.push([id,d]);cols.push(pos[d].x);}
+    if(cols.length)pos[id].x=(Math.min(...cols)+Math.max(...cols))/2;else pos[id].x=col++;
+  };
+  place(g.root,14,null);
+  const W=Math.max(1,col)*(NW+GX)+20,H=maxY+30;
+  const cx=id=>X(pos[id].x), cy=id=>pos[id].y;
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg"><defs><marker id="${opts.idp}ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#E5533D"/></marker></defs>`;
+  const curve=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1} C${x1} ${y1+16} ${x2} ${y2-16} ${x2} ${y2}" fill="none" stroke="#BDBCB5" stroke-width="1.4"/>`;
+  treeEdges.forEach(([a,b])=>{s+=curve(cx(a),cy(a)+NH,cx(b),cy(b));});
+  rails.forEach(([p,fs])=>{const rx=cx(fs[0])-NW/2-7,top=cy(fs[0])+NH/2,bot=cy(fs[fs.length-1])+NH/2;
+    s+=`<path d="M${cx(p)} ${cy(p)+NH} C${cx(p)} ${cy(p)+NH+14} ${rx} ${top-24} ${rx} ${top-8} V${bot}" fill="none" stroke="#BDBCB5" stroke-width="1.4"/>`;
+    fs.forEach(f=>{s+=`<path d="M${rx} ${cy(f)+NH/2} H${rx+7}" stroke="#BDBCB5" stroke-width="1.4"/>`;});});
+  linkEdges.forEach(([a,b])=>{const x1=cx(a)+NW/2-10,y1=cy(a)+NH,x2=cx(b)+(cx(b)<cx(a)?NW/2:-NW/2+10),y2=cy(b)+NH/2;const mx=(x1+x2)/2,my=Math.max(y1,y2)+28;
+    s+=`<path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" fill="none" stroke="#E5533D" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#${opts.idp}ar)"/>`;});
+  order.forEach(id=>{const n=g.nodes[id],x=cx(id)-NW/2,y=cy(id),isDir=n.type==='dir',cur=id===g.cwd,lab=pos[id].label;const shared=opts.shared&&opts.shared(id);
+    const max=Math.floor((NW-14)/7.2),t=lab.length>max?lab.slice(0,max-1)+'…':lab;
+    s+=`<g class="gn" data-id="${id}" style="cursor:${isDir&&opts.click?'pointer':'default'}"><title>${esc(lab)}</title><rect x="${x}" y="${y}" width="${NW}" height="${NH}" rx="${isDir?3:12}" fill="${cur?'#3B5BDB':isDir?'#FFF5DD':'#FFFFFF'}" stroke="${shared?'#E5533D':cur?'#3B5BDB':isDir?'#F0B132':'#CFCEC8'}" stroke-width="${shared?1.8:1}"/>`+
+      `<text x="${x+NW/2}" y="${y+17}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="${cur?'#fff':'#1A1C1A'}">${isDir&&id!==g.root?'':''}${esc(t)}${isDir&&id!==g.root?'/':''}</text></g>`;});
+  return s+'</svg>';
+}
+function renderTree(){
+  // drop links pointing to deleted nodes
+  for(const k in nodes)nodes[k].children=nodes[k].children.filter(c=>nodes[c]);
+  if(!cwdStack.every(id=>nodes[id]))cwdStack=[rootId];
+  const reach=reachable();
+  const shared=id=>parentsOf(id).length>1;
+  $('#diagram').innerHTML=drawGraph({nodes,root:rootId,nameOf:childName,cwd:cwd()},{idp:'sb',click:true,shared});
+  $$('#diagram .gn').forEach(g=>g.addEventListener('click',()=>{const id=g.dataset.id;if(nodes[id].type!=='dir')return;const p=pathsTo(id)[0];if(id===rootId){run('cd /');}else if(p){run('cd '+(mode==='two'?p.replace(/^MFD/,'')||'/':p));}$('#prompt').textContent=promptText();}));
+  const total=Object.keys(nodes).length,files=Object.values(nodes).filter(n=>n.type==='file').length,links=Object.keys(nodes).filter(shared).length;
+  const garbage=Object.keys(nodes).filter(k=>!reach.has(k)).length, cyc=hasCycle();
+  $('#dstat').innerHTML=`<span>${files} files</span><span>·</span><span>${total-files} directories</span><span>·</span><span>${links} shared</span>${cyc?'<span>·</span><span class="warn">cycle present</span>':''}${garbage?`<span>·</span><span class="warn">${garbage} unreachable (garbage)</span>`:''}<span style="flex:1"></span><span>cwd: ${esc(pathOf(cwdStack))}</span>`;
+  $('#prompt').textContent=promptText();
+}
+function renderModeInfo(){
+  const M=MODES[mode];
+  $('#modeInfo').innerHTML=`<h3>${M.t} directory</h3><p>${M.d}</p><div class="pc"><div><span class="label">Advantages</span><ul>${M.pro.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="cons"><span class="label">Disadvantages</span><ul>${M.con.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>`;
+  $('#quick').innerHTML=M.quick.map(q=>`<button>${esc(q)}</button>`).join('')+'<button class="aiq" data-ai="1">✦ explain what just happened</button>';
+  $$('#quick button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.ai){run('ask explain what just happened in my last commands and why');}else run(b.textContent);$('#termIn').focus({preventScroll:true});}));
+}
+function setMode(m,custom){
+  mode=m;$$('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  linkNames={};if(custom){custom();}else seed(m);history=[];out.innerHTML='';
+  print(`${MODES[m].t} directory loaded. Type <b style="color:#fff">help</b> or tap a suggestion below.`,'in');
+  renderModeInfo();renderTree();
+}
+$('#modes').innerHTML=ORDER.map((m,i)=>`<button data-m="${m}">${i+1}. ${MODES[m].t}</button>`).join('');
+$$('#modes button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.m)));
+setMode('tree');
+
+/* ================= permissions ================= */
+let perm={u:[1,1,1],g:[1,0,1],o:[1,0,0]};
+const WHO=[['u','Owner','ana'],['g','Group','students'],['o','Others','everyone else']];
+function renderPerm(){
+  $('#permBody').innerHTML=WHO.map(([k,n,s])=>`<tr><td>${n}<small>${s}</small></td>${[0,1,2].map(i=>`<td><input type="checkbox" data-k="${k}" data-i="${i}" ${perm[k][i]?'checked':''} aria-label="${n} ${'rwx'[i]}"></td>`).join('')}</tr>`).join('');
+  $$('#permBody input').forEach(c=>c.addEventListener('change',()=>{perm[c.dataset.k][+c.dataset.i]=c.checked?1:0;permOut();}));
+  permOut();
+}
+function permOut(){
+  const oct=['u','g','o'].map(k=>perm[k][0]*4+perm[k][1]*2+perm[k][2]).join('');
+  const sym='-'+['u','g','o'].map(k=>perm[k].map((v,i)=>v?'rwx'[i]:'-').join('')).join('');
+  $('#octal').textContent=oct;$('#symb').textContent=sym;$('#chmod').textContent=`chmod ${oct} report.txt`;
+  const who=$('#who').value,act=$('#act').value,i='rwx'.indexOf(act),cls=who==='ana'?'u':who==='ravi'?'g':'o';
+  const verb={r:'read',w:'write to',x:'run'}[act],yes=!!perm[cls][i];
+  const cname={u:'owner',g:'group',o:'others'}[cls];
+  $('#accres').className='accres '+(yes?'yes':'no');
+  $('#accres').innerHTML=`${yes?'<b>ALLOWED</b>':'<b>DENIED</b>'}: ${who} ${yes?'can':'cannot'} ${verb} report.txt. The OS checks the <b>${cname}</b> class, whose <b>${act}</b> bit is ${yes?'set':'not set'} (${sym.slice(1+'ugo'.indexOf(cls)*3,4+'ugo'.indexOf(cls)*3)}).`;
+}
+$('#who').addEventListener('change',permOut);$('#act').addEventListener('change',permOut);
+$$('#permPresets button').forEach(b=>b.addEventListener('click',()=>{const o=b.dataset.o;['u','g','o'].forEach((k,j)=>{const d=+o[j];perm[k]=[d>>2&1,d>>1&1,d&1];});renderPerm();}));
+renderPerm();
+
+/* ================= AI organiser ================= */
+let orgTree=null;
+const RULES=[['Images',/\.(jpe?g|png|gif|svg|webp|heic)$/i],['Music',/\.(mp3|wav|flac|aac|m4a)$/i],['Videos',/\.(mp4|mkv|mov|avi)$/i],['Code',/\.(py|c|cpp|h|java|js|ts|html|css|sh|go|rs)$/i],['Documents',/\.(pdf|docx?|txt|md|pptx?|odt|rtf)$/i],['Spreadsheets',/\.(xlsx?|csv|ods)$/i],['Programs',/\.(exe|msi|dmg|apk|deb)$/i],['Archives',/\.(zip|rar|7z|tar|gz|iso)$/i]];
+function parseFiles(){return [...new Set($('#orgIn').value.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean).map(s=>s.replace(/[^A-Za-z0-9._ -]/g,'').replace(/\s+/g,'_').slice(0,40)).filter(Boolean))].slice(0,60);}
+function ruleOrganise(files){const groups={};files.forEach(f=>{const r=RULES.find(([,re])=>re.test(f));const g=r?r[0]:'Other';(groups[g]=groups[g]||[]).push(f);});return {folders:Object.entries(groups).map(([name,children])=>({name,children})),why:'Grouped by file extension: each kind of file goes into its own folder.'};}
+function validate(tree,files){
+  const left=new Set(files);let depth=0;
+  const clean=(arr,d)=>{depth=Math.max(depth,d);const out=[];if(!Array.isArray(arr))return out;for(const it of arr){
+    if(typeof it==='string'){if(left.has(it)){left.delete(it);out.push(it);}}
+    else if(it&&typeof it==='object'&&it.name&&d<4){const kids=clean(it.children,d+1);if(kids.length)out.push({name:String(it.name).replace(/[^A-Za-z0-9._ -]/g,'').replace(/\s+/g,'_').slice(0,24)||'Folder',children:kids});}
+  }return out;};
+  const folders=clean(tree.folders||tree.children||[],1);
+  if(left.size)folders.push({name:'Other',children:[...left]});
+  return {folders,why:String(tree.why||tree.explanation||'').slice(0,600)};
+}
+function orgToGraph(t){const g={};let n=0;const id=()=>'o'+(n++);const root=id();g[root]={name:'/',type:'dir',children:[]};
+  const build=(p,arr)=>arr.forEach(it=>{if(typeof it==='string'){const k=id();g[k]={name:it,type:'file',children:[]};g[p].children.push(k);}else{const k=id();g[k]={name:it.name,type:'dir',children:[]};g[p].children.push(k);build(k,it.children);}});
+  build(root,t.folders);return {g,root};}
+function renderOrg(t,src){
+  const {g,root}=orgToGraph(t);
+  $('#orgDiag').innerHTML=drawGraph({nodes:g,root,nameOf:(p,c)=>g[c].name,cwd:null},{idp:'og',nw:150});
+  $('#orgSrc').innerHTML=src==='ai'?'<span class="tag ai">✦ organised by AI</span>':'<span class="tag">extension rules (AI offline)</span>';
+  $('#orgWhy').style.display='';$('#orgWhy').textContent=t.why;
+  $('#orgLoad').disabled=false;
+}
+function extractJSON(text){const a=text.indexOf('{'),b=text.lastIndexOf('}');if(a<0||b<a)throw new Error('no json');return JSON.parse(text.slice(a,b+1));}
+$('#orgBtn').addEventListener('click',async()=>{
+  const files=parseFiles();if(!files.length){$('#orgDiag').innerHTML='<p class="empty">Add some file names first.</p>';return;}
+  const btn=$('#orgBtn');btn.disabled=true;btn.textContent='✦ Organising…';$('#orgDiag').innerHTML='<p class="spinner">thinking about your files…</p>';$('#orgWhy').style.display='none';
+  let t,src='rules';
+  if(aiReady){
+    try{
+      const r=await askAI(`You organise files into a tree-structured directory, like a tidy computer. Files:\n${files.join('\n')}\n\nReturn ONLY JSON, no prose, in this shape:\n{"folders":[{"name":"FolderName","children":["file.ext",{"name":"SubFolder","children":["file2.ext"]}]}],"why":"2-3 short sentences explaining the grouping for a student"}\nRules: use every file name exactly once and spelled exactly as given; 3-7 top-level folders; at most 2 levels of folders; folder names short, no spaces (use _ or CamelCase); group by meaning (e.g. Study, Finance, Media) not only by extension.`);
+      t=validate(extractJSON(r.text||''),files);src='ai';
+      if(!t.folders.length)throw new Error('empty');
+      if(!t.why)t.why='Grouped by what each file is for.';
+    }catch(e){t=ruleOrganise(files);$('#orgNote').textContent=e&&e.code==='rate_limited'?'AI is busy right now, so extension rules were used. Try again in a moment.':'AI could not be reached, so extension rules were used instead.';}
+  } else t=ruleOrganise(files);
+  orgTree=t;renderOrg(t,src);btn.disabled=false;btn.textContent='✦ Organise with AI';
+});
+$('#orgLoad').addEventListener('click',()=>{
+  if(!orgTree)return;
+  setMode('tree',()=>{nodes={};nid=0;rootId=mk('/','dir');const build=(p,arr)=>arr.forEach(it=>{if(typeof it==='string')add(p,mk(it,'file'));else{const d=add(p,mk(it.name,'dir'));build(d,it.children);}});build(rootId,orgTree.folders);cwdStack=[rootId];});
+  print('Loaded your organised files. Try <b style="color:#fff">ls</b>, cd into a folder, or ln to share a file (switch to acyclic graph first).','in');
+  document.getElementById('directories').scrollIntoView({behavior:'smooth'});
+});
+
+/* ================= chat tutor ================= */
+const FALLBACK=[
+ [/single/i,'A **single-level directory** keeps every file in one place. It is simple, but every name must be unique, so two users cannot both have a file called test.'],
+ [/two.?level|mfd|ufd/i,'In a **two-level directory**, a **Master File Directory (MFD)** points to one **User File Directory (UFD)** per user. Users can reuse names, but there are no subfolders and sharing is limited.'],
+ [/acyclic|link|shar(e|ing) file/i,'An **acyclic graph** lets a file or folder appear in several directories through **links**, with no loops allowed. A change made by one user is seen by all, but deleting needs every reference removed.'],
+ [/general|cycle|garbage/i,'A **general graph** allows **cycles**. It is the most flexible, but traversal must detect loops and **garbage collection** is needed for items that can no longer be reached.'],
+ [/tree|hierarch|path/i,'A **tree** directory has a root at the top with folders inside folders. Each file has one **absolute path** (from the root) and can be named by a **relative path** (from where you are).'],
+ [/sequential|tape/i,'**Sequential access** reads records in order from the start, and the pointer moves forward after each read. It suits tape.'],
+ [/direct|random/i,'**Direct access** jumps straight to any block using its block number, without reading the ones before it.'],
+ [/index/i,'**Index sequential access** first searches an index (like a book index) for the right block, then jumps there and reads forward.'],
+ [/extension|file name|filename/i,'A file name has two parts: the **name** and the **extension**, separated by a period. The extension (like .pdf) hints at the file type.'],
+ [/type|regular|special|device/i,'There are three main file types: **regular** (normal data), **special/device** (represent hardware), and **directory** (hold information about other files).'],
+ [/vfs|virtual|layer/i,'The request passes down through **logical file system** (names, permissions) → **virtual file system** (one interface for many file systems) → **physical file system** (data blocks) → **partitions**.'],
+ [/permission|chmod|rwx|protect|encrypt/i,'Protection methods include **permissions**, **encryption**, **password protection**, **secure protocols** (SFTP, HTTPS) and **firewalls**. On Unix, rwx bits for owner, group and others control access.'],
+];
+const fallbackAnswer=q=>{for(const[re,a]of FALLBACK)if(re.test(q))return a;return 'AI is offline right now, so I can only answer from the notes. Try asking about **directory structures**, **access methods**, **file types** or **protection**.';};
+function md(src){const lines=esc(src).split('\n');let o='',list=null;const close=()=>{if(list){o+=`</${list}>`;list=null;}};
+  for(const raw of lines){const l=raw.trim();let m;if((m=l.match(/^[-•*]\s+(.*)/))){if(list!=='ul'){close();o+='<ul>';list='ul';}o+=`<li>${inl(m[1])}</li>`;}else if((m=l.match(/^\d+[.)]\s+(.*)/))){if(list!=='ol'){close();o+='<ol>';list='ol';}o+=`<li>${inl(m[1])}</li>`;}else if(!l)close();else{close();o+=`<p>${inl(l.replace(/^#+\s*/,''))}</p>`;}}close();return o;}
+function inl(t){return t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>');}
+function mdInline(s){return inl(esc(s)).replace(/\n+/g,'<br>');}
+const msgs=$('#msgs');let convo=[],busy=false;
+function addMsg(r,h){const d=document.createElement('div');d.className='m '+r;d.innerHTML=h;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d;}
+const SUGG=['Tree vs acyclic graph?','Why does general graph need garbage collection?','Explain index sequential access','What does chmod 754 mean?'];
+function renderSugg(){const l=convo.length?SUGG.filter(x=>!convo.some(m=>m.content===x)).slice(0,2):SUGG;$('#sugg').innerHTML=l.map(s=>`<button type="button">${s}</button>`).join('');$$('#sugg button').forEach(b=>b.onclick=()=>send(b.textContent));}
+addMsg('bot',md('Hi! Ask me anything about files, access methods, directory structures or protection. I can also see what you are doing in the file system sandbox.'));renderSugg();
+async function send(text){
+  text=(text||'').trim();if(!text||busy)return;openChat();$('#sugg').innerHTML='';
+  addMsg('me',esc(text));$('#chatIn').value='';grow();convo.push({role:'user',content:text});
+  const bub=addMsg('bot','<span style="color:var(--muted);font-family:var(--mono);font-size:13px">thinking…</span>');busy=true;$('#sendBtn').disabled=true;
+  if(!aiReady){await sleep(350);const a=fallbackAnswer(text);bub.innerHTML=md(a);convo.push({role:'assistant',content:a});busy=false;$('#sendBtn').disabled=false;renderSugg();return;}
+  const sys=`You are FolderLab AI, a friendly tutor on FolderLab, a student website about the OS file system interface. ${NOTES}\n\nThe student's sandbox right now: structure=${MODES[mode].t}, cwd=${pathOf(cwdStack)}, recent commands: ${history.slice(-5).join(' | ')||'none'}.\nStyle: 60-150 words, short paragraphs or "- " bullets, **bold** key terms, no headings or tables unless asked, simple language for first-year students, use analogies. Stay on topic.`;
+  const hist=convo.slice(-10).map(m=>({...m}));if(hist[0].role!=='user')hist.shift();hist[0]={role:'user',content:sys+'\n\n---\nStudent: '+hist[0].content};
+  try{const r=await askAI(hist,{onText:({text})=>{if(text){bub.innerHTML=md(text);msgs.scrollTop=msgs.scrollHeight;}}});const o=r.text||'';bub.innerHTML=md(o||'No answer came back. Try rephrasing?');convo.push({role:'assistant',content:o});}
+  catch(e){const a=e&&e.code==='rate_limited'?'Too many questions at once. Wait a moment and try again.':fallbackAnswer(text);bub.innerHTML=md(a);convo.push({role:'assistant',content:a});}
+  busy=false;$('#sendBtn').disabled=false;renderSugg();
+}
+function openChat(){$('#chat').classList.add('open');$('#fab').style.display='none';setTimeout(()=>$('#chatIn').focus(),200);}
+function closeChat(){$('#chat').classList.remove('open');$('#fab').style.display='';}
+$('#fab').onclick=openChat;$('#closeChat').onclick=closeChat;
+$('#chatForm').addEventListener('submit',e=>{e.preventDefault();send($('#chatIn').value);});
+const ta=$('#chatIn');function grow(){ta.style.height='auto';ta.style.height=Math.min(110,ta.scrollHeight)+'px';}
+ta.addEventListener('input',grow);ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send(ta.value);}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeChat();});
+})();
+</script>
+</body>
+</html>
